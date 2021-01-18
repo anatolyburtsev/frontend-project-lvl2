@@ -16,3 +16,4 @@ rules:
   import/extensions: off
   no-await-in-loop: off
   no-underscore-dangle: [2, { "allow": ["__filename", "__dirname"] }] # разрешает подчёркивание в именах только для двух констант
+  import/prefer-default-export: off

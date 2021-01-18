@@ -2,8 +2,8 @@
 
 import { program } from 'commander';
 import fs from 'fs';
-import {normalizePath} from "../src/utils.js";
-import genDiff from "../src/gendiff.js";
+import { normalizePath } from '../src/utils.js';
+import genDiff from '../src/gendiff.js';
 
 program
   .version('0.0.1')
@@ -19,4 +19,3 @@ program
   });
 
 program.parse();
-
