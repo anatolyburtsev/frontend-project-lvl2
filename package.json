@@ -11,6 +11,10 @@
     "testEnvironment": "node",
     "transform": {}
   },
+  "moduleFileExtensions": [
+    "js",
+    "mjs"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/anatolyburtsev/frontend-project-lvl2.git"
