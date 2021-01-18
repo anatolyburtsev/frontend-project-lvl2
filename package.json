@@ -9,7 +9,10 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "transform": {}
+    "transform": {
+      "^.+\\.mjs$": "babel-jest",
+      "^.+\\.jsx?$": "babel-jest"
+    }
   },
   "moduleFileExtensions": [
     "js",
