@@ -5,7 +5,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {}
   },
   "repository": {
     "type": "git",
@@ -17,7 +21,7 @@
     "url": "https://github.com/anatolyburtsev/frontend-project-lvl2/issues"
   },
   "bin": {
-    "gendiff": "gendiff.js"
+    "gendiff": "bin/gendiff.js"
   },
   "homepage": "https://github.com/anatolyburtsev/frontend-project-lvl2#readme",
   "dependencies": {
@@ -25,6 +29,9 @@
     "lodash": "^4.17.20"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.12.11",
+    "@jest/globals": "^26.6.2",
+    "babel-jest": "^26.6.3",
     "eslint": "^7.18.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
