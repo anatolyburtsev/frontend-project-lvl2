@@ -1,5 +1,6 @@
 import { expect, test } from '@jest/globals';
 import { normalizePath } from '../src/utils.js';
+import { __dirname } from './gendiff.test.js';
 
 test('resolve absolute path', () => {
   const path = `${__dirname}/../__tests__`;

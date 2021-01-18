@@ -1,7 +1,11 @@
 import fs from 'fs';
 import { expect, test } from '@jest/globals';
-import path from 'path';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
 import genDiff from '../src/gendiff';
+
+export const __filename = fileURLToPath(import.meta.url);
+export const __dirname = dirname(__filename);
 
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 
