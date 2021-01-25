@@ -7,7 +7,7 @@ import genDiff from '../src/gendiff';
 export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
 
-const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
+const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', 'json', filename);
 
 test('different files - positive', () => {
   const obj1 = JSON.parse(fs.readFileSync(getFixturePath('webconfig1.json'), 'utf-8'));
