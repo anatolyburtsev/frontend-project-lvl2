@@ -1,3 +1,7 @@
+import fs from 'fs';
+import { normalizePath } from './utils.js';
+import { getParser } from './parsers.js';
+
 const constructAnswer = (changes) => {
   const str = ['{'];
   changes.forEach((line) => {
@@ -8,8 +12,12 @@ const constructAnswer = (changes) => {
   return str.join('\n');
 };
 
-const genDiff = (obj1, obj2) => {
-  const keys = [...new Set(Object.keys(obj1).concat(Object.keys(obj2)))];
+const genDiffObjects = (argObj1, argObj2) => {
+  const obj1 = argObj1 ?? {};
+  const obj2 = argObj2 ?? {};
+
+  const keys = [...new Set(Object.keys(obj1).concat(Object.keys(obj2)))]
+    .filter((x) => x);
   keys.sort();
 
   const changes = [];
@@ -33,6 +41,15 @@ const genDiff = (obj1, obj2) => {
   });
 
   return constructAnswer(changes);
+};
+
+const genDiff = (filepath1, filepath2, format = 'json') => {
+  const parser = getParser(format);
+  const content = [filepath1, filepath2]
+    .map(normalizePath)
+    .map((fp) => fs.readFileSync(fp, 'utf-8'))
+    .map(parser);
+  return genDiffObjects(...content);
 };
 
 export default genDiff;

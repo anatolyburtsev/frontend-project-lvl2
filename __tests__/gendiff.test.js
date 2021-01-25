@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { expect, test } from '@jest/globals';
+import { expect, test, describe } from '@jest/globals';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import genDiff from '../src/gendiff';
@@ -7,28 +7,21 @@ import genDiff from '../src/gendiff';
 export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = dirname(__filename);
 
-const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', 'json', filename);
+const getFixturePath = (format, filename) => path.join(__dirname, '..', '__fixtures__', format, filename);
 
-test('different files - positive', () => {
-  const obj1 = JSON.parse(fs.readFileSync(getFixturePath('webconfig1.json'), 'utf-8'));
-  const obj2 = JSON.parse(fs.readFileSync(getFixturePath('webconfig2.json'), 'utf-8'));
-  const expectedResult = fs.readFileSync(getFixturePath('expectedWebconfigs.txt'), 'utf-8');
-  const result = genDiff(obj1, obj2);
-  expect(result).toEqual(expectedResult);
-});
-
-test('compare with empty object - positive', () => {
-  const obj1 = JSON.parse(fs.readFileSync(getFixturePath('webconfig1.json'), 'utf-8'));
-  const obj2 = {};
-  const expectedResult = fs.readFileSync(getFixturePath('expectedMinusWebconfig1.txt'), 'utf-8');
-  const result = genDiff(obj1, obj2);
-  expect(result).toEqual(expectedResult);
-});
-
-test('compare file with itself - positive', () => {
-  const obj1 = JSON.parse(fs.readFileSync(getFixturePath('webconfig1.json'), 'utf-8'));
-  const obj2 = obj1;
-  const expectedResult = fs.readFileSync(getFixturePath('expectedItselfWebconfig1.txt'), 'utf-8');
-  const result = genDiff(obj1, obj2);
-  expect(result).toEqual(expectedResult);
+describe('parametrized', () => {
+  test.each([
+    ['json', 'two different files', 'webconfig1.json', 'webconfig2.json', 'expectedWebconfigs.txt'],
+    ['json', 'compare with empty', 'webconfig1.json', 'empty.json', 'expectedMinusWebconfig1.txt'],
+    ['json', 'compare with itself', 'webconfig1.json', 'webconfig1.json', 'expectedItselfWebconfig1.txt'],
+    ['yaml', 'two different files', 'webconfig1.yml', 'webconfig2.yml', 'expectedWebconfigs.txt'],
+    ['yaml', 'compare with empty', 'webconfig1.yml', 'empty.yml', 'expectedMinusWebconfig1.txt'],
+    ['yaml', 'compare with itself', 'webconfig1.yml', 'webconfig1.yml', 'expectedItselfWebconfig1.txt'],
+  ])("format: '%s', case: '%s'", (format, desc, fp1, fp2, fexp) => {
+    const filepath1 = getFixturePath(format, fp1);
+    const filepath2 = getFixturePath(format, fp2);
+    const expectedResult = fs.readFileSync(getFixturePath(format, fexp), 'utf-8');
+    const result = genDiff(filepath1, filepath2, format);
+    expect(result).toEqual(expectedResult);
+  });
 });
