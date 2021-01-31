@@ -2,18 +2,12 @@ import fs from 'fs';
 import * as path from 'path';
 import { normalizePath } from './utils.js';
 import { getParser } from './parsers.js';
-
-const constructAnswer = (changes) => {
-  const str = ['{'];
-  changes.forEach((line) => {
-    const [sign, key, value] = line;
-    str.push(`  ${sign} ${key}: ${value}`);
-  });
-  str.push('}\n');
-  return str.join('\n');
-};
+import { getFormatter } from './formatters.js';
+import { KEY_ADDED, KEY_REMAINED, KEY_REMOVED } from './constants.js';
 
 const genDiffObjects = (argObj1, argObj2) => {
+  // console.dir(argObj1);
+  // console.dir(argObj2);
   const obj1 = argObj1 ?? {};
   const obj2 = argObj2 ?? {};
 
@@ -26,37 +20,43 @@ const genDiffObjects = (argObj1, argObj2) => {
     const value1 = obj1[key];
     const value2 = obj2[key];
     if (value1 === value2) {
-      changes.push([' ', key, value1]);
+      changes.push([KEY_REMAINED, key, value1]);
       return;
     }
     if (value1 === undefined) {
-      changes.push(['+', key, value2]);
+      changes.push([KEY_ADDED, key, value2]);
       return;
     }
     if (value2 === undefined) {
-      changes.push(['-', key, value1]);
+      changes.push([KEY_REMOVED, key, value1]);
       return;
     }
-    changes.push(['-', key, value1]);
-    changes.push(['+', key, value2]);
+    if (typeof value1 === 'object' && typeof value2 === 'object') {
+      changes.push([KEY_REMAINED, key, genDiffObjects(value1, value2)]);
+    } else {
+      changes.push([KEY_REMOVED, key, value1]);
+      changes.push([KEY_ADDED, key, value2]);
+    }
   });
 
-  return constructAnswer(changes);
+  return changes;
 };
 
 const getFileExtension = (filepath) => path.extname(filepath).replace('.', '');
 
 // eslint-disable-next-line no-unused-vars
-const genDiff = (filepath1, filepath2, format = 'json') => {
+const genDiff = (filepath1, filepath2, format) => {
   const objects = [filepath1, filepath2]
     .map(normalizePath)
     .map((fp) => {
       const content = fs.readFileSync(fp, 'utf-8');
       const fileExtension = getFileExtension(fp);
       const parser = getParser(fileExtension);
-      return parser(content);
+      return parser.parse(content);
     });
-  return genDiffObjects(...objects);
+  const diff = genDiffObjects(...objects);
+  const formatter = getFormatter(format);
+  return formatter.format(diff);
 };
 
 export default genDiff;
