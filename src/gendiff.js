@@ -1,4 +1,5 @@
 import fs from 'fs';
+import * as path from 'path';
 import { normalizePath } from './utils.js';
 import { getParser } from './parsers.js';
 
@@ -43,13 +44,19 @@ const genDiffObjects = (argObj1, argObj2) => {
   return constructAnswer(changes);
 };
 
+const getFileExtension = (filepath) => path.extname(filepath).replace('.', '');
+
+// eslint-disable-next-line no-unused-vars
 const genDiff = (filepath1, filepath2, format = 'json') => {
-  const parser = getParser(format);
-  const content = [filepath1, filepath2]
+  const objects = [filepath1, filepath2]
     .map(normalizePath)
-    .map((fp) => fs.readFileSync(fp, 'utf-8'))
-    .map(parser);
-  return genDiffObjects(...content);
+    .map((fp) => {
+      const content = fs.readFileSync(fp, 'utf-8');
+      const fileExtension = getFileExtension(fp);
+      const parser = getParser(fileExtension);
+      return parser(content);
+    });
+  return genDiffObjects(...objects);
 };
 
 export default genDiff;

@@ -1,8 +1,9 @@
-import yaml from 'js-yaml';
+import jsyaml from 'js-yaml';
 
 const parsers = {
   json: JSON.parse,
-  yaml: yaml.load,
+  yaml: jsyaml.load,
+  yml: jsyaml.load,
 };
 
 export const getParser = (type) => parsers[type] ?? JSON.parse;
