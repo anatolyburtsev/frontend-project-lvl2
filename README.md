@@ -8,3 +8,8 @@
 $ gendiff file1.json file2.json
 ```
 [![asciicast](https://asciinema.org/a/nsTaEY4ZLq1wu9iKAZGgrrEYn.svg)](https://asciinema.org/a/nsTaEY4ZLq1wu9iKAZGgrrEYn)
+
+```sh
+$ gendiff file1.yaml file2.yaml
+```
+[![asciicast](https://asciinema.org/a/ZxdY3Oj24xWioxUmWC5sdNfiC.svg)](https://asciinema.org/a/ZxdY3Oj24xWioxUmWC5sdNfiC)
