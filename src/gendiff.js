@@ -1,13 +1,12 @@
 import fs from 'fs';
-import * as path from 'path';
-import { normalizePath } from './utils.js';
+import { getFileExtension, normalizePath } from './utils.js';
 import { getParser } from './parsers.js';
-import { getFormatter } from './formatters/index.js';
+import { getFormatter } from './formatters';
 import {
-  KEY_ADDED, KEY_REMAINED, KEY_REMOVED, KEY_UPDATED, KEY_UPDATED_NEW_VALUE, KEY_UPDATED_OLD_VALUE,
+  KEY_ADDED, NOT_CHANGED, KEY_REMOVED, KEY_UPDATED, KEY_UPDATED_NEW_VALUE, KEY_UPDATED_OLD_VALUE,
 } from './constants.js';
 
-const genDiffObjects = (argObj1, argObj2) => {
+const buildDiffForObjects = (argObj1, argObj2) => {
   const obj1 = argObj1 ?? {};
   const obj2 = argObj2 ?? {};
 
@@ -20,7 +19,7 @@ const genDiffObjects = (argObj1, argObj2) => {
     const value1 = obj1[key];
     const value2 = obj2[key];
     if (value1 === value2) {
-      changes.push([KEY_REMAINED, key, value1]);
+      changes.push([NOT_CHANGED, key, value1]);
       return;
     }
     if (value1 === undefined) {
@@ -32,7 +31,7 @@ const genDiffObjects = (argObj1, argObj2) => {
       return;
     }
     if (typeof value1 === 'object' && typeof value2 === 'object') {
-      changes.push([KEY_UPDATED, key, genDiffObjects(value1, value2)]);
+      changes.push([KEY_UPDATED, key, buildDiffForObjects(value1, value2)]);
     } else {
       changes.push([KEY_UPDATED_OLD_VALUE, key, value1]);
       changes.push([KEY_UPDATED_NEW_VALUE, key, value2]);
@@ -42,10 +41,7 @@ const genDiffObjects = (argObj1, argObj2) => {
   return changes;
 };
 
-const getFileExtension = (filepath) => path.extname(filepath).replace('.', '');
-
-// eslint-disable-next-line no-unused-vars
-const genDiff = (filepath1, filepath2, format) => {
+const buildDiff = (filepath1, filepath2, format) => {
   const objects = [filepath1, filepath2]
     .map(normalizePath)
     .map((fp) => {
@@ -54,9 +50,9 @@ const genDiff = (filepath1, filepath2, format) => {
       const parser = getParser(fileExtension);
       return parser.parse(content);
     });
-  const diff = genDiffObjects(...objects);
+  const diff = buildDiffForObjects(...objects);
   const formatter = getFormatter(format);
   return formatter.format(diff);
 };
 
-export default genDiff;
+export default buildDiff;

@@ -3,7 +3,7 @@ import {
 } from '../constants.js';
 import { isObject } from '../utils.js';
 
-const toStr = (value) => {
+const toString = (value) => {
   if (isObject(value)) {
     return '[complex value]';
   } if (typeof value === 'string') {
@@ -20,7 +20,7 @@ const formatPlain = (changes, prefix) => {
       str.push(`Property '${prefix}${key}' was removed`);
     }
     if (sign === KEY_ADDED) {
-      str.push(`Property '${prefix}${key}' was added with value: ${toStr(value)}`);
+      str.push(`Property '${prefix}${key}' was added with value: ${toString(value)}`);
     }
     if (sign === KEY_UPDATED) {
       str.push(formatPlain(value, `${prefix}${key}.`));
@@ -34,7 +34,7 @@ const formatPlain = (changes, prefix) => {
       if (key !== prevKey) {
         throw Error(`Keys in update expected to be the same: ${key} and ${prevKey}`);
       }
-      str.push(`Property '${prefix}${key}' was updated. From ${toStr(prevValue)} to ${toStr(value)}`);
+      str.push(`Property '${prefix}${key}' was updated. From ${toString(prevValue)} to ${toString(value)}`);
     }
   });
   if (prefix === '') {
