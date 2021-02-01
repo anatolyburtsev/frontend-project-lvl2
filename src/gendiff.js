@@ -2,12 +2,12 @@ import fs from 'fs';
 import * as path from 'path';
 import { normalizePath } from './utils.js';
 import { getParser } from './parsers.js';
-import { getFormatter } from './formatters.js';
-import { KEY_ADDED, KEY_REMAINED, KEY_REMOVED } from './constants.js';
+import { getFormatter } from './formatters/index.js';
+import {
+  KEY_ADDED, KEY_REMAINED, KEY_REMOVED, KEY_UPDATED, KEY_UPDATED_NEW_VALUE, KEY_UPDATED_OLD_VALUE,
+} from './constants.js';
 
 const genDiffObjects = (argObj1, argObj2) => {
-  // console.dir(argObj1);
-  // console.dir(argObj2);
   const obj1 = argObj1 ?? {};
   const obj2 = argObj2 ?? {};
 
@@ -32,10 +32,10 @@ const genDiffObjects = (argObj1, argObj2) => {
       return;
     }
     if (typeof value1 === 'object' && typeof value2 === 'object') {
-      changes.push([KEY_REMAINED, key, genDiffObjects(value1, value2)]);
+      changes.push([KEY_UPDATED, key, genDiffObjects(value1, value2)]);
     } else {
-      changes.push([KEY_REMOVED, key, value1]);
-      changes.push([KEY_ADDED, key, value2]);
+      changes.push([KEY_UPDATED_OLD_VALUE, key, value1]);
+      changes.push([KEY_UPDATED_NEW_VALUE, key, value2]);
     }
   });
 

@@ -1,8 +1,18 @@
-import { KEY_REMAINED } from './constants.js';
+import {
+  KEY_ADDED, KEY_REMAINED, KEY_REMOVED, KEY_UPDATED, KEY_UPDATED_NEW_VALUE, KEY_UPDATED_OLD_VALUE,
+} from '../constants.js';
+import { isObject } from '../utils.js';
 
 const stylishIndent = '  ';
 
-const isObject = (obj) => typeof obj === 'object' && obj !== null;
+const operationToSign = {
+  [KEY_REMAINED]: ' ',
+  [KEY_UPDATED]: ' ',
+  [KEY_REMOVED]: '-',
+  [KEY_ADDED]: '+',
+  [KEY_UPDATED_OLD_VALUE]: '-',
+  [KEY_UPDATED_NEW_VALUE]: '+',
+};
 
 const stylishLine = (key, value, sign, indentSize) => {
   const indent = stylishIndent.repeat(indentSize);
@@ -17,12 +27,14 @@ const stylishWithIndent = (changes, indentSize) => {
   const closingIndent = stylishIndent.repeat(indentSize - 1);
   if (Array.isArray(changes)) {
     changes.forEach((line) => {
-      const [sign, key, value] = line;
+      const [operation, key, value] = line;
+      const sign = operationToSign[operation];
       str.push(stylishLine(key, value, sign, indentSize));
     });
   } else {
     Object.entries(changes).forEach(([key, value]) => {
-      str.push(stylishLine(key, value, KEY_REMAINED, indentSize));
+      const sign = operationToSign[KEY_REMAINED];
+      str.push(stylishLine(key, value, sign, indentSize));
     });
   }
   str.push(`${closingIndent}}`);
@@ -33,12 +45,5 @@ const stylishWithIndent = (changes, indentSize) => {
 
   return str.join('\n');
 };
-const stylish = (diff) => stylishWithIndent(diff, 1);
 
-const formatters = {
-  stylish,
-};
-
-export const getFormatter = (type) => ({
-  format: formatters[type] ?? stylish,
-});
+export const stylish = (diff) => stylishWithIndent(diff, 1);

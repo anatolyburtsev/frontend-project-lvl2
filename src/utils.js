@@ -5,3 +5,5 @@ export const normalizePath = (filepath) => {
     : path.join(process.cwd(), filepath);
   return path.normalize(absoluteFilepath);
 };
+
+export const isObject = (obj) => typeof obj === 'object' && obj !== null;
