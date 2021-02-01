@@ -18,8 +18,7 @@ const toString = (key, value, nodeType, indentSize) => {
   const indent = stylishIndent.repeat(indentSize);
   // eslint-disable-next-line no-use-before-define
   const valueStr = isObject(value) ? stylishWithIndent(value, indentSize + 2) : value;
-  const spaceBeforeValue = valueStr === '' ? '' : ' ';
-  return `${indent}${nodeType} ${key}:${spaceBeforeValue}${valueStr}`;
+  return `${indent}${nodeType} ${key}: ${valueStr}`;
 };
 
 const stylishWithIndent = (changes, indentSize) => {

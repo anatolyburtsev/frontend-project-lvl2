@@ -12,7 +12,7 @@ const getFixturePath = (format, filename) => path.join(__dirname, '..', '__fixtu
 describe('parametrized', () => {
   test.each([
     ['json', 'nested json files', 'nestedConfig1.json', 'nestedConfig2.json', 'expectedNestedConfigDiff.txt', 'stylish'],
-    ['yaml', 'nested yaml files', 'nestedConfig1.yml', 'nestedConfig2.yml', 'expectedNestedConfigDiff.txt', 'stylish'],
+    ['yaml', 'nested yaml files', 'nestedConfig1.yml', 'nestedConfig2.yml', 'expectedNestedConfigDiffStylish.txt', 'stylish'],
     ['yaml', 'nested files, plain output format', 'nestedConfig1.yml', 'nestedConfig2.yml', 'expectedNestedConfigDiffPlain.txt', 'plain'],
     ['yaml', 'nested files, json output format', 'nestedConfig1.yml', 'nestedConfig2.yml', 'expectedNestedConfigDiffJson.json', 'json'],
   ])("format: '%s', case: '%s'", (inputFormat, desc, fp1, fp2, expFp, outputFormat) => {
