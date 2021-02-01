@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
-import { program } from 'commander';
+import pkg from 'commander';
 import buildDiff from '../src/gendiff.js';
+
+const { program } = pkg;
 
 program
   .version('0.0.1')
