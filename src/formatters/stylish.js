@@ -26,8 +26,8 @@ const stylishWithIndent = (changes, indentSize) => {
   const closingIndent = stylishIndent.repeat(indentSize - 1);
   if (Array.isArray(changes)) {
     changes.forEach((line) => {
-      const [nodeType, key, value] = line;
-      const sign = nodeTypeToSign[nodeType];
+      const { key, value, status } = line;
+      const sign = nodeTypeToSign[status];
       str.push(toString(key, value, sign, indentSize));
     });
   } else {

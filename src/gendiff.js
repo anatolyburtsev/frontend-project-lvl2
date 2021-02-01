@@ -19,22 +19,22 @@ const buildDiffForObjects = (argObj1, argObj2) => {
     const value1 = obj1[key];
     const value2 = obj2[key];
     if (value1 === value2) {
-      changes.push([NOT_CHANGED, key, value1]);
+      changes.push({ key, value: value1, status: NOT_CHANGED });
       return;
     }
     if (value1 === undefined) {
-      changes.push([KEY_ADDED, key, value2]);
+      changes.push({ key, value: value2, status: KEY_ADDED });
       return;
     }
     if (value2 === undefined) {
-      changes.push([KEY_REMOVED, key, value1]);
+      changes.push({ key, value: value1, status: KEY_REMOVED });
       return;
     }
     if (typeof value1 === 'object' && typeof value2 === 'object') {
-      changes.push([KEY_UPDATED, key, buildDiffForObjects(value1, value2)]);
+      changes.push({ key, value: buildDiffForObjects(value1, value2), status: KEY_UPDATED });
     } else {
-      changes.push([KEY_UPDATED_OLD_VALUE, key, value1]);
-      changes.push([KEY_UPDATED_NEW_VALUE, key, value2]);
+      changes.push({ key, value: value1, status: KEY_UPDATED_OLD_VALUE });
+      changes.push({ key, value: value2, status: KEY_UPDATED_NEW_VALUE });
     }
   });
 

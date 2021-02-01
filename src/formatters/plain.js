@@ -15,21 +15,21 @@ const toString = (value) => {
 const formatPlain = (changes, prefix) => {
   const str = [];
   changes.forEach((line, idx) => {
-    const [sign, key, value] = line;
-    if (sign === KEY_REMOVED) {
+    const { key, value, status } = line;
+    if (status === KEY_REMOVED) {
       str.push(`Property '${prefix}${key}' was removed`);
     }
-    if (sign === KEY_ADDED) {
+    if (status === KEY_ADDED) {
       str.push(`Property '${prefix}${key}' was added with value: ${toString(value)}`);
     }
-    if (sign === KEY_UPDATED) {
+    if (status === KEY_UPDATED) {
       str.push(formatPlain(value, `${prefix}${key}.`));
     }
 
-    if (sign === KEY_UPDATED_NEW_VALUE) {
-      const [prevSign, prevKey, prevValue] = changes[idx - 1];
-      if (prevSign !== KEY_UPDATED_OLD_VALUE) {
-        throw Error(`Unexpected key: ${prevSign}`);
+    if (status === KEY_UPDATED_NEW_VALUE) {
+      const { key: prevKey, value: prevValue, status: prevStatus } = changes[idx - 1];
+      if (prevStatus !== KEY_UPDATED_OLD_VALUE) {
+        throw Error(`Unexpected key: ${prevStatus}`);
       }
       if (key !== prevKey) {
         throw Error(`Keys in update expected to be the same: ${key} and ${prevKey}`);
