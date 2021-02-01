@@ -29,3 +29,10 @@ $ gendiff file1.yaml file2.yaml
 $ gendiff file1.yaml file2.yaml -f plain
 ```
 [![asciicast](https://asciinema.org/a/QhPYnPY1PaR1SBSi3z8R9GbQj.svg)](https://asciinema.org/a/QhPYnPY1PaR1SBSi3z8R9GbQj)
+
+### Compare files with json output
+```sh
+$ gendiff file1.yaml file2.yaml -f json 
+```
+[![asciicast](https://asciinema.org/a/nwyyGuBPds4YElsvfgiveC0wi.svg)](https://asciinema.org/a/nwyyGuBPds4YElsvfgiveC0wi)
+

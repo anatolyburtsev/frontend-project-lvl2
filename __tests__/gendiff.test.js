@@ -20,6 +20,7 @@ describe('parametrized', () => {
     ['yaml', 'compare with itself', 'webconfig1.yml', 'webconfig1.yml', 'expectedItselfWebconfig1.txt', 'stylish'],
     ['yaml', 'nested files', 'nestedConfig1.yml', 'nestedConfig2.yml', 'expectedNestedConfigDiff.txt', 'stylish'],
     ['yaml', 'nested files with plain format', 'nestedConfig1.yml', 'nestedConfig2.yml', 'expectedNestedConfigDiffPlain.txt', 'plain'],
+    ['yaml', 'nested files with json format', 'nestedConfig1.yml', 'nestedConfig2.yml', 'expectedNestedConfigDiffJson.json', 'json'],
   ])("format: '%s', case: '%s'", (inputFormat, desc, fp1, fp2, fexp, outputFormat) => {
     const filepath1 = getFixturePath(inputFormat, fp1);
     const filepath2 = getFixturePath(inputFormat, fp2);
