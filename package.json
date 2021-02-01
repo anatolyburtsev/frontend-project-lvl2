@@ -7,9 +7,6 @@
   "scripts": {
     "test": "npx jest"
   },
-  "modulePaths": [
-    "<rootDir>"
-  ],
   "engines": {
     "node": ">=14"
   },
