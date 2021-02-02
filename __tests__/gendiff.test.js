@@ -21,6 +21,6 @@ describe('parametrized', () => {
     const expectedFilepath = getFixturePath(inputFormat, expFp);
     const expectedResult = fs.readFileSync(expectedFilepath, 'utf-8');
     const result = buildDiff(filepath1, filepath2, outputFormat);
-    expect(expectedResult).toEqual(result);
+    expect(result).toEqual(expectedResult);
   });
 });

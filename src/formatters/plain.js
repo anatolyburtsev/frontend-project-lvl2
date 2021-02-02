@@ -37,9 +37,6 @@ const formatPlain = (changes, prefix) => {
       str.push(`Property '${prefix}${key}' was updated. From ${toString(prevValue)} to ${toString(value)}`);
     }
   });
-  if (prefix === '') {
-    str.push('');
-  }
   return str.join('\n');
 };
 
