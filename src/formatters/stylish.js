@@ -38,10 +38,6 @@ const stylishWithIndent = (changes, indentSize) => {
   }
   str.push(`${closingIndent}}`);
 
-  if (indentSize === 1) {
-    str.push('');
-  }
-
   return str.join('\n');
 };
 
