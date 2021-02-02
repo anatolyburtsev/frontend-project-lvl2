@@ -41,4 +41,6 @@ const stylishWithIndent = (changes, indentSize) => {
   return str.join('\n');
 };
 
-export const stylish = (diff) => stylishWithIndent(diff, 1);
+const stylish = (diff) => stylishWithIndent(diff, 1);
+
+export default stylish;

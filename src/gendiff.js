@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { getFileExtension, normalizePath } from './utils.js';
-import { getParser } from './parsers.js';
-import { getFormatter } from './formatters/index.js';
+import getParser from './parsers.js';
+import getFormatter from './formatters/index.js';
 import {
   KEY_ADDED, NOT_CHANGED, KEY_REMOVED, KEY_UPDATED, KEY_UPDATED_NEW_VALUE, KEY_UPDATED_OLD_VALUE,
 } from './constants.js';

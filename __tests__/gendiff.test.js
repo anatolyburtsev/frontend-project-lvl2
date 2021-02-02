@@ -4,8 +4,8 @@ import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import buildDiff from '../src/gendiff';
 
-export const __filename = fileURLToPath(import.meta.url);
-export const __dirname = dirname(__filename);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const getFixturePath = (format, filename) => path.join(__dirname, '..', '__fixtures__', format, filename);
 

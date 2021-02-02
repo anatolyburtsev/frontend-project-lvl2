@@ -40,4 +40,6 @@ const formatPlain = (changes, prefix) => {
   return str.join('\n');
 };
 
-export const plain = (diff) => formatPlain(diff, '');
+const plain = (diff) => formatPlain(diff, '');
+
+export default plain;
