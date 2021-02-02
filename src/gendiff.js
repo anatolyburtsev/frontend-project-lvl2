@@ -1,4 +1,5 @@
 import fs from 'fs';
+import _ from 'lodash';
 import { getFileExtension, normalizePath } from './utils.js';
 import getParser from './parsers.js';
 import getFormatter from './formatters/index.js';
@@ -10,9 +11,9 @@ const buildDiffForObjects = (argObj1, argObj2) => {
   const obj1 = argObj1 ?? {};
   const obj2 = argObj2 ?? {};
 
-  const keys = [...new Set(Object.keys(obj1).concat(Object.keys(obj2)))]
+  const unsortedKeys = [...new Set(Object.keys(obj1).concat(Object.keys(obj2)))]
     .filter((x) => x);
-  keys.sort();
+  const keys = _.sortBy(unsortedKeys);
 
   const changes = [];
   keys.forEach((key) => {

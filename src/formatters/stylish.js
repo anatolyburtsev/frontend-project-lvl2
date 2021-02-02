@@ -21,24 +21,22 @@ const toString = (key, value, nodeType, indentSize) => {
   return `${indent}${nodeType} ${key}: ${valueStr}`;
 };
 
-const stylishWithIndent = (changes, indentSize) => {
-  const str = ['{'];
-  const closingIndent = stylishIndent.repeat(indentSize - 1);
-  if (Array.isArray(changes)) {
-    changes.forEach((line) => {
-      const { key, value, status } = line;
-      const sign = nodeTypeToSign[status];
-      str.push(toString(key, value, sign, indentSize));
-    });
-  } else {
-    Object.entries(changes).forEach(([key, value]) => {
-      const sign = nodeTypeToSign[NOT_CHANGED];
-      str.push(toString(key, value, sign, indentSize));
-    });
-  }
-  str.push(`${closingIndent}}`);
+const stylishFromArray = (array, indentSize) => array.map((line) => {
+  const { key, value, status } = line;
+  const sign = nodeTypeToSign[status];
+  return toString(key, value, sign, indentSize);
+}).join('\n');
 
-  return str.join('\n');
+const stylishFromObj = (obj, indentSize) => Object.entries(obj).map(([key, value]) => {
+  const sign = nodeTypeToSign[NOT_CHANGED];
+  return toString(key, value, sign, indentSize);
+}).join('\n');
+
+const stylishWithIndent = (changes, indentSize) => {
+  const closingIndent = stylishIndent.repeat(indentSize - 1);
+  const content = Array.isArray(changes)
+    ? stylishFromArray(changes, indentSize) : stylishFromObj(changes, indentSize);
+  return `{\n${content}\n${closingIndent}}`;
 };
 
 const stylish = (diff) => stylishWithIndent(diff, 1);
