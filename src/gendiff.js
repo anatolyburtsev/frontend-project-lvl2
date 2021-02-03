@@ -39,9 +39,9 @@ const buildDiffForObjects = (argObj1, argObj2) => {
 const buildDiff = (filepath1, filepath2, format) => {
   const objects = [filepath1, filepath2]
     .map(normalizePath)
-    .map((fp) => {
-      const content = fs.readFileSync(fp, 'utf-8');
-      const fileExtension = getFileExtension(fp);
+    .map((filepath) => {
+      const content = fs.readFileSync(filepath, 'utf-8');
+      const fileExtension = getFileExtension(filepath);
       const parser = getParser(fileExtension);
       return parser.parse(content);
     });

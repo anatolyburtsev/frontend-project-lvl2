@@ -35,7 +35,8 @@ const stylishFromObj = (obj, indentSize) => Object.entries(obj).map(([key, value
 const stylishWithIndent = (changes, indentSize) => {
   const closingIndent = stylishIndent.repeat(indentSize - 1);
   const content = Array.isArray(changes)
-    ? stylishFromArray(changes, indentSize) : stylishFromObj(changes, indentSize);
+    ? stylishFromArray(changes, indentSize)
+    : stylishFromObj(changes, indentSize);
   return `{\n${content}\n${closingIndent}}`;
 };
 

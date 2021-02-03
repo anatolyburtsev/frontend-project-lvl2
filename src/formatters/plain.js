@@ -12,7 +12,7 @@ const toString = (value) => {
   return value;
 };
 
-const formatPlain = (changes, prefix) => changes.map((line, idx) => {
+const formatPlain = (diff, prefix) => diff.map((line, idx) => {
   const { key, value, status } = line;
   if (status === KEY_REMOVED) {
     return `Property '${prefix}${key}' was removed`;
@@ -25,7 +25,7 @@ const formatPlain = (changes, prefix) => changes.map((line, idx) => {
   }
 
   if (status === KEY_UPDATED_NEW_VALUE) {
-    const { key: prevKey, value: prevValue, status: prevStatus } = changes[idx - 1];
+    const { key: prevKey, value: prevValue, status: prevStatus } = diff[idx - 1];
     if (prevStatus !== KEY_UPDATED_OLD_VALUE) {
       throw Error(`Unexpected key: ${prevStatus}`);
     }
