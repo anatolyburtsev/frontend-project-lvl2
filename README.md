@@ -3,6 +3,10 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/0f59942315935c352ae2/maintainability)](https://codeclimate.com/github/anatolyburtsev/frontend-project-lvl2/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/0f59942315935c352ae2/test_coverage)](https://codeclimate.com/github/anatolyburtsev/frontend-project-lvl2/test_coverage)
 
+Console tool to compare two configuration files and shows a difference. 
+Supported input formats: ``json`` and ``yaml``. Output difference can be shown in following formats: ``stylish`` (default), ``plain`` and ``json``.
+
+
 ## Usage
 
 ### Compare json

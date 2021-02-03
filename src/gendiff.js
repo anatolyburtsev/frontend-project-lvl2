@@ -4,18 +4,26 @@ import { getFileExtension, normalizePath } from './utils.js';
 import getParser from './parsers.js';
 import getFormatter from './formatters/index.js';
 import {
-  KEY_ADDED, NOT_CHANGED, KEY_REMOVED, KEY_UPDATED, KEY_UPDATED_NEW_VALUE, KEY_UPDATED_OLD_VALUE,
+  KEY_ADDED,
+  KEY_REMOVED,
+  KEY_UPDATED,
+  KEY_UPDATED_NEW_VALUE,
+  KEY_UPDATED_OLD_VALUE,
+  NOT_CHANGED,
 } from './constants.js';
+
+const getListOfKeys = (obj1, obj2) => {
+  const unsortedKeys = [...new Set(Object.keys(obj1).concat(Object.keys(obj2)))]
+    .filter((x) => x);
+  return _.sortBy(unsortedKeys);
+};
 
 const buildDiffForObjects = (argObj1, argObj2) => {
   const obj1 = argObj1 ?? {};
   const obj2 = argObj2 ?? {};
+  const keys = getListOfKeys(obj1, obj2);
 
-  const unsortedKeys = [...new Set(Object.keys(obj1).concat(Object.keys(obj2)))]
-    .filter((x) => x);
-  const keys = _.sortBy(unsortedKeys);
-
-  const changes = keys.map((key) => {
+  return keys.map((key) => {
     const value1 = obj1[key];
     const value2 = obj2[key];
     if (value1 === value2) {
@@ -33,7 +41,6 @@ const buildDiffForObjects = (argObj1, argObj2) => {
     return [{ key, value: value1, status: KEY_UPDATED_OLD_VALUE },
       { key, value: value2, status: KEY_UPDATED_NEW_VALUE }];
   }).flat(1);
-  return changes;
 };
 
 const buildDiff = (filepath1, filepath2, format) => {
