@@ -1,5 +1,6 @@
 import {
-  KEY_ADDED, KEY_REMOVED, KEY_UPDATED, KEY_UPDATED_NEW_VALUE, KEY_UPDATED_OLD_VALUE,
+  NODE_ADDED, NODE_CHANGED, NODE_NESTED,
+  NODE_REMOVED, NODE_ROOT,
 } from '../constants.js';
 import { isObject } from '../utils.js';
 
@@ -12,32 +13,31 @@ const toString = (value) => {
   return value;
 };
 
-const formatPlain = (diff, prefix) => diff.map((line, idx) => {
-  const { key, value, status } = line;
-  if (status === KEY_REMOVED) {
+const formatPlain = (nodeArray, prefix) => nodeArray.map((node) => {
+  const { key, type } = node;
+  if (type === NODE_REMOVED) {
     return `Property '${prefix}${key}' was removed`;
   }
-  if (status === KEY_ADDED) {
+  if (type === NODE_ADDED) {
+    const { value } = node;
     return `Property '${prefix}${key}' was added with value: ${toString(value)}`;
   }
-  if (status === KEY_UPDATED) {
-    return formatPlain(value, `${prefix}${key}.`);
+  if (type === NODE_NESTED) {
+    return formatPlain([node.value], `${prefix}${key}.`);
   }
 
-  if (status === KEY_UPDATED_NEW_VALUE) {
-    const { key: prevKey, value: prevValue, status: prevStatus } = diff[idx - 1];
-    if (prevStatus !== KEY_UPDATED_OLD_VALUE) {
-      throw Error(`Unexpected key: ${prevStatus}`);
-    }
-    if (key !== prevKey) {
-      throw Error(`Keys in update expected to be the same: ${key} and ${prevKey}`);
-    }
-    return `Property '${prefix}${key}' was updated. From ${toString(prevValue)} to ${toString(value)}`;
+  if (type === NODE_ROOT) {
+    return formatPlain(node.children, prefix);
+  }
+
+  if (type === NODE_CHANGED) {
+    const { oldValue, newValue } = node;
+    return `Property '${prefix}${key}' was updated. From ${toString(oldValue)} to ${toString(newValue)}`;
   }
 
   return null;
-}).filter((l) => l).join('\n');
+}).filter((u) => u).join('\n');
 
-const plain = (diff) => formatPlain(diff, '');
+const plain = (tree) => formatPlain(tree.children, '');
 
 export default plain;

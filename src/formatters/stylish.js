@@ -1,45 +1,67 @@
+import _ from 'lodash';
 import {
-  KEY_ADDED, NOT_CHANGED, KEY_REMOVED, KEY_UPDATED, KEY_UPDATED_NEW_VALUE, KEY_UPDATED_OLD_VALUE,
+  NODE_ADDED, NODE_CHANGED, NODE_NESTED,
+  NODE_NOT_CHANGED, NODE_REMOVED, NODE_ROOT,
 } from '../constants.js';
-import { isObject } from '../utils.js';
 
 const stylishIndent = '  ';
 
 const nodeTypeToSign = {
-  [NOT_CHANGED]: ' ',
-  [KEY_UPDATED]: ' ',
-  [KEY_REMOVED]: '-',
-  [KEY_ADDED]: '+',
-  [KEY_UPDATED_OLD_VALUE]: '-',
-  [KEY_UPDATED_NEW_VALUE]: '+',
+  [NODE_NOT_CHANGED]: ' ',
+  [NODE_CHANGED]: ' ',
+  [NODE_NESTED]: ' ',
+  [NODE_REMOVED]: '-',
+  [NODE_ADDED]: '+',
 };
 
-const toString = (key, value, nodeType, indentSize) => {
+const stringifyObject = (obj, indentSize) => {
+  const indent = stylishIndent.repeat(indentSize + 2);
+  const closingIndent = stylishIndent.repeat(indentSize);
+  const properties = Object.entries(obj).map(([key, value]) => {
+    const valueStr = _.isPlainObject(value) ? stringifyObject(value, indentSize + 2) : value;
+    const response = `${indent}${key}: ${valueStr}`;
+    return response;
+  }).join('\n');
+  const response = `{\n${properties}\n${closingIndent}}`;
+  return response;
+};
+
+const stringify = (key, value, sign, indentSize) => {
   const indent = stylishIndent.repeat(indentSize);
-  // eslint-disable-next-line no-use-before-define
-  const valueStr = isObject(value) ? stylishWithIndent(value, indentSize + 2) : value;
-  return `${indent}${nodeType} ${key}: ${valueStr}`;
+  const valueStr = _.isPlainObject(value) ? stringifyObject(value, indentSize + 1) : value;
+  return `${indent}${sign} ${key}: ${valueStr}`;
 };
 
-const stylishFromArray = (array, indentSize) => array.map((line) => {
-  const { key, value, status } = line;
-  const sign = nodeTypeToSign[status];
-  return toString(key, value, sign, indentSize);
+const getIndent = (indentSize) => stylishIndent.repeat(indentSize);
+
+const stylishWithIndent = (nodeArray, indentSize) => nodeArray.flatMap((node) => {
+  const { key, type } = node;
+  if (type === NODE_NESTED) {
+    const indent = getIndent(indentSize + 1);
+    const value = stylishWithIndent([node.value], indentSize + 2);
+    return `${indent}${key}: {\n${value}\n${indent}}`;
+  }
+  if (type === NODE_ROOT) {
+    return stylishWithIndent(node.children, indentSize);
+  }
+  if (type === NODE_CHANGED) {
+    const { oldValue, newValue } = node;
+    return [
+      stringify(key, oldValue, nodeTypeToSign[NODE_REMOVED], indentSize),
+      stringify(key, newValue, nodeTypeToSign[NODE_ADDED], indentSize),
+    ];
+  }
+  if (type === NODE_ADDED || type === NODE_REMOVED || type === NODE_NOT_CHANGED) {
+    const sign = nodeTypeToSign[type];
+    const { value } = node;
+    return stringify(key, value, sign, indentSize);
+  }
+  return null;
 }).join('\n');
 
-const stylishFromObj = (obj, indentSize) => Object.entries(obj).map(([key, value]) => {
-  const sign = nodeTypeToSign[NOT_CHANGED];
-  return toString(key, value, sign, indentSize);
-}).join('\n');
-
-const stylishWithIndent = (changes, indentSize) => {
-  const closingIndent = stylishIndent.repeat(indentSize - 1);
-  const content = Array.isArray(changes)
-    ? stylishFromArray(changes, indentSize)
-    : stylishFromObj(changes, indentSize);
-  return `{\n${content}\n${closingIndent}}`;
+const stylish = (tree) => {
+  const value = stylishWithIndent(tree.children, 1);
+  return `{\n${value}\n}`;
 };
-
-const stylish = (diff) => stylishWithIndent(diff, 1);
 
 export default stylish;

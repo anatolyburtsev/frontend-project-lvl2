@@ -1,6 +1,6 @@
-export const KEY_ADDED = 'ADD';
-export const KEY_REMOVED = 'REMOVED';
-export const NOT_CHANGED = 'NOT_CHANGED';
-export const KEY_UPDATED = 'UPDATED';
-export const KEY_UPDATED_OLD_VALUE = 'UPDATED_OLD_VALUE';
-export const KEY_UPDATED_NEW_VALUE = 'UPDATED_NEW_VALUE';
+export const NODE_ROOT = 'root';
+export const NODE_NESTED = 'nested';
+export const NODE_CHANGED = 'changed';
+export const NODE_NOT_CHANGED = 'not_changed';
+export const NODE_ADDED = 'added';
+export const NODE_REMOVED = 'removed';
