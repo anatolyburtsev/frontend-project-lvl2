@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import {
-  NODE_ADDED, NODE_CHANGED, NODE_NESTED,
-  NODE_NOT_CHANGED, NODE_REMOVED, NODE_ROOT,
+  NODE_ADDED, NODE_CHANGED, NODE_NESTED, NODE_NOT_CHANGED, NODE_REMOVED, NODE_ROOT,
 } from '../constants.js';
 
 const stylishIndent = '  ';
@@ -14,25 +13,23 @@ const nodeTypeToSign = {
   [NODE_ADDED]: '+',
 };
 
+const getIndent = (indentSize) => stylishIndent.repeat(indentSize);
+
 const stringifyObject = (obj, indentSize) => {
-  const indent = stylishIndent.repeat(indentSize + 2);
-  const closingIndent = stylishIndent.repeat(indentSize);
+  const indent = getIndent(indentSize + 2);
+  const closingIndent = getIndent(indentSize);
   const properties = Object.entries(obj).map(([key, value]) => {
     const valueStr = _.isPlainObject(value) ? stringifyObject(value, indentSize + 2) : value;
-    const response = `${indent}${key}: ${valueStr}`;
-    return response;
+    return `${indent}${key}: ${valueStr}`;
   }).join('\n');
-  const response = `{\n${properties}\n${closingIndent}}`;
-  return response;
+  return `{\n${properties}\n${closingIndent}}`;
 };
 
 const stringify = (key, value, sign, indentSize) => {
-  const indent = stylishIndent.repeat(indentSize);
+  const indent = getIndent(indentSize);
   const valueStr = _.isPlainObject(value) ? stringifyObject(value, indentSize + 1) : value;
   return `${indent}${sign} ${key}: ${valueStr}`;
 };
-
-const getIndent = (indentSize) => stylishIndent.repeat(indentSize);
 
 const stylishWithIndent = (nodeArray, indentSize) => nodeArray.flatMap((node) => {
   const { key, type } = node;

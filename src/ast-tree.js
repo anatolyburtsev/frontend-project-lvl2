@@ -11,21 +11,20 @@ const buildAstTree = (obj1 = {}, obj2 = {}) => {
     const value1 = obj1[key];
     const value2 = obj2[key];
     if (!_.has(obj1, key)) {
-      return { key, value: obj2[key], type: NODE_ADDED };
+      return { key, value: value2, type: NODE_ADDED };
     }
     if (!_.has(obj2, key)) {
-      return { key, value: obj1[key], type: NODE_REMOVED };
+      return { key, value: value1, type: NODE_REMOVED };
     }
     if (!_.isEqual(value1, value2)) {
-      if (_.isPlainObject(obj1[key]) && _.isPlainObject(obj2[key])) {
-        // return { key, type: NODE_NESTED, value: buildAstTree(value1, value2) };
+      if (_.isPlainObject(value1) && _.isPlainObject(value2)) {
         return { key, type: NODE_NESTED, value: buildAstTree(value1, value2) };
       }
       return {
-        key, oldValue: obj1[key], newValue: obj2[key], type: NODE_CHANGED,
+        key, oldValue: value1, newValue: value2, type: NODE_CHANGED,
       };
     }
-    return { key, value: obj1[key], type: NODE_NOT_CHANGED };
+    return { key, value: value1, type: NODE_NOT_CHANGED };
   });
   return {
     type: NODE_ROOT,
