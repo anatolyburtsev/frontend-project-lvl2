@@ -8,8 +8,9 @@ const formatters = {
   json,
 };
 
-const getFormatter = (type) => ({
-  format: formatters[type] ?? stylish,
-});
+const format = (type, data) => {
+  const formatter = formatters[type] ?? stylish;
+  return formatter(data);
+};
 
-export default getFormatter;
+export default format;

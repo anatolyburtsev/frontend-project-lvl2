@@ -1,43 +1,53 @@
+import _ from 'lodash';
 import {
-  NODE_ADDED, NODE_CHANGED, NODE_NESTED,
+  NODE_ADDED, NODE_CHANGED, NODE_NESTED, NODE_NOT_CHANGED,
   NODE_REMOVED, NODE_ROOT,
 } from '../constants.js';
-import { isObject } from '../utils.js';
 
 const toString = (value) => {
-  if (isObject(value)) {
+  if (_.isObject(value)) {
     return '[complex value]';
-  } if (typeof value === 'string') {
+  }
+  if (typeof value === 'string') {
     return `'${value}'`;
   }
   return value;
 };
 
-const formatPlain = (nodeArray, prefix) => nodeArray.map((node) => {
-  const { key, type } = node;
-  if (type === NODE_REMOVED) {
-    return `Property '${prefix}${key}' was removed`;
-  }
-  if (type === NODE_ADDED) {
-    const { value } = node;
-    return `Property '${prefix}${key}' was added with value: ${toString(value)}`;
-  }
-  if (type === NODE_NESTED) {
-    return formatPlain([node.value], `${prefix}${key}.`);
-  }
+const getPropertyName = (path, key) => [...path, key].join('.');
 
-  if (type === NODE_ROOT) {
-    return formatPlain(node.children, prefix);
-  }
+const nodeProcessingMapping = {
+  [NODE_REMOVED]: (node, path) => {
+    const { key } = node;
+    const propertyName = getPropertyName(path, key);
+    return `Property '${propertyName}' was removed`;
+  },
+  [NODE_ADDED]: (node, path) => {
+    const { value, key } = node;
+    const propertyName = getPropertyName(path, key);
+    return `Property '${propertyName}' was added with value: ${toString(value)}`;
+  },
+  [NODE_NESTED]: (node, path) => {
+    const { key } = node;
+    // eslint-disable-next-line no-use-before-define
+    return formatPlain([node.value], [...path, key]);
+  },
+  // eslint-disable-next-line no-use-before-define
+  [NODE_ROOT]: (node, path) => formatPlain(node.children, path),
+  [NODE_CHANGED]: (node, path) => {
+    const { oldValue, newValue, key } = node;
+    const propertyName = getPropertyName(path, key);
+    return `Property '${propertyName}' was updated. From ${toString(oldValue)} to ${toString(newValue)}`;
+  },
+  [NODE_NOT_CHANGED]: () => {},
+};
 
-  if (type === NODE_CHANGED) {
-    const { oldValue, newValue } = node;
-    return `Property '${prefix}${key}' was updated. From ${toString(oldValue)} to ${toString(newValue)}`;
-  }
-
-  return null;
+const formatPlain = (nodeArray, path) => nodeArray.map((node) => {
+  const { type } = node;
+  const func = nodeProcessingMapping[type];
+  return func(node, path);
 }).filter((u) => u).join('\n');
 
-const plain = (tree) => formatPlain(tree.children, '');
+const plain = (tree) => formatPlain(tree.children, []);
 
 export default plain;

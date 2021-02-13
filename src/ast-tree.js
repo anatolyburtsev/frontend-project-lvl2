@@ -7,7 +7,7 @@ const buildAstTree = (obj1 = {}, obj2 = {}) => {
   const unsortedKeys = _.union(_.keys(obj1), _.keys(obj2));
   const keys = _.sortBy(unsortedKeys);
 
-  const children = keys.flatMap((key) => {
+  const children = keys.map((key) => {
     const value1 = obj1[key];
     const value2 = obj2[key];
     if (!_.has(obj1, key)) {

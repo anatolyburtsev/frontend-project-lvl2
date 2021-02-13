@@ -6,8 +6,9 @@ const parsers = {
   yml: jsyaml.load,
 };
 
-const getParser = (type) => ({
-  parse: parsers[type],
-});
+const parse = (type, data) => {
+  const parser = parsers[type];
+  return parser(data);
+};
 
-export default getParser;
+export default parse;

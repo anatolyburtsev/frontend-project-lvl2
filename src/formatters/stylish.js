@@ -31,33 +31,41 @@ const stringify = (key, value, sign, indentSize) => {
   return `${indent}${sign} ${key}: ${valueStr}`;
 };
 
-const stylishWithIndent = (nodeArray, indentSize) => nodeArray.flatMap((node) => {
-  const { key, type } = node;
-  if (type === NODE_NESTED) {
+const nodeProcessingMapping = {
+  [NODE_NESTED]: (node, indentSize) => {
+    const { key } = node;
     const indent = getIndent(indentSize + 1);
+    // eslint-disable-next-line no-use-before-define
     const value = stylishWithIndent([node.value], indentSize + 2);
     return `${indent}${key}: {\n${value}\n${indent}}`;
-  }
-  if (type === NODE_ROOT) {
-    return stylishWithIndent(node.children, indentSize);
-  }
-  if (type === NODE_CHANGED) {
-    const { oldValue, newValue } = node;
+  },
+  // eslint-disable-next-line no-use-before-define
+  [NODE_ROOT]: (node, indentSize) => stylishWithIndent(node.children, indentSize),
+  [NODE_CHANGED]: (node, indentSize) => {
+    const { key, oldValue, newValue } = node;
     return [
       stringify(key, oldValue, nodeTypeToSign[NODE_REMOVED], indentSize),
       stringify(key, newValue, nodeTypeToSign[NODE_ADDED], indentSize),
     ];
-  }
-  if (type === NODE_ADDED || type === NODE_REMOVED || type === NODE_NOT_CHANGED) {
-    const sign = nodeTypeToSign[type];
-    const { value } = node;
-    return stringify(key, value, sign, indentSize);
-  }
-  return null;
-}).join('\n');
+  },
+};
+
+const defaultProcessing = (node, indentSize) => {
+  const { key, type, value } = node;
+  const sign = nodeTypeToSign[type];
+  return stringify(key, value, sign, indentSize);
+};
+
+const processNode = (node, indentSize) => {
+  const processor = nodeProcessingMapping[node.type] ?? defaultProcessing;
+  return processor(node, indentSize);
+};
+
+const stylishWithIndent = (nodeArray, indentSize) => nodeArray
+  .flatMap((node) => processNode(node, indentSize)).join('\n');
 
 const stylish = (tree) => {
-  const value = stylishWithIndent(tree.children, 1);
+  const value = stylishWithIndent([tree], 1);
   return `{\n${value}\n}`;
 };
 

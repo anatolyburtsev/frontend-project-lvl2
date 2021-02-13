@@ -1,21 +1,27 @@
 import fs from 'fs';
-import { getFileExtension, normalizePath } from './utils.js';
-import getParser from './parsers.js';
-import getFormatter from './formatters/index.js';
+import path from 'path';
+import parse from './parsers.js';
+import format from './formatters/index.js';
 import buildAstTree from './ast-tree.js';
 
-const buildDiff = (filepath1, filepath2, format) => {
+const normalizePath = (filepath) => {
+  const absoluteFilepath = path.isAbsolute(filepath) ? filepath
+    : path.join(process.cwd(), filepath);
+  return path.normalize(absoluteFilepath);
+};
+
+const getFileExtension = (filepath) => path.extname(filepath).replace('.', '');
+
+const buildDiff = (filepath1, filepath2, outputFormat) => {
   const objects = [filepath1, filepath2]
     .map(normalizePath)
     .map((filepath) => {
       const content = fs.readFileSync(filepath, 'utf-8');
       const fileExtension = getFileExtension(filepath);
-      const parser = getParser(fileExtension);
-      return parser.parse(content);
+      return parse(fileExtension, content);
     });
   const astTree = buildAstTree(...objects);
-  const formatter = getFormatter(format);
-  return formatter.format(astTree);
+  return format(outputFormat, astTree);
 };
 
 export default buildDiff;
