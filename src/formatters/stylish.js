@@ -31,6 +31,12 @@ const stringify = (key, value, sign, indentSize) => {
   return `${indent}${sign} ${key}: ${valueStr}`;
 };
 
+const simpleSignedPrintProcessing = (node, indentSize) => {
+  const { key, type, value } = node;
+  const sign = nodeTypeToSign[type];
+  return stringify(key, value, sign, indentSize);
+};
+
 const nodeProcessingMapping = {
   [NODE_NESTED]: (node, indentSize) => {
     const { key } = node;
@@ -48,21 +54,13 @@ const nodeProcessingMapping = {
       stringify(key, newValue, nodeTypeToSign[NODE_ADDED], indentSize),
     ];
   },
-};
-
-const defaultProcessing = (node, indentSize) => {
-  const { key, type, value } = node;
-  const sign = nodeTypeToSign[type];
-  return stringify(key, value, sign, indentSize);
-};
-
-const processNode = (node, indentSize) => {
-  const processor = nodeProcessingMapping[node.type] ?? defaultProcessing;
-  return processor(node, indentSize);
+  [NODE_ADDED]: (node, indentSize) => simpleSignedPrintProcessing(node, indentSize),
+  [NODE_REMOVED]: (node, indentSize) => simpleSignedPrintProcessing(node, indentSize),
+  [NODE_NOT_CHANGED]: (node, indentSize) => simpleSignedPrintProcessing(node, indentSize),
 };
 
 const stylishWithIndent = (nodeArray, indentSize) => nodeArray
-  .flatMap((node) => processNode(node, indentSize)).join('\n');
+  .flatMap((node) => nodeProcessingMapping[node.type](node, indentSize)).join('\n');
 
 const stylish = (tree) => {
   const value = stylishWithIndent([tree], 1);
