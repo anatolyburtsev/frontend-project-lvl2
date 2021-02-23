@@ -1,7 +1,11 @@
 import _ from 'lodash';
-import {
-  NODE_ADDED, NODE_CHANGED, NODE_NESTED, NODE_NOT_CHANGED, NODE_REMOVED, NODE_ROOT,
-} from './constants.js';
+
+export const NODE_ROOT = 'root';
+export const NODE_NESTED = 'nested';
+export const NODE_CHANGED = 'changed';
+export const NODE_NOT_CHANGED = 'not_changed';
+export const NODE_ADDED = 'added';
+export const NODE_REMOVED = 'removed';
 
 const buildAstTree = (obj1 = {}, obj2 = {}) => {
   const unsortedKeys = _.union(_.keys(obj1), _.keys(obj2));

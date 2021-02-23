@@ -9,7 +9,10 @@ const formatters = {
 };
 
 const format = (type, data) => {
-  const formatter = formatters[type] ?? stylish;
+  const formatter = formatters[type];
+  if (formatter === undefined) {
+    throw new Error(`Unknown formatter: ${type}`);
+  }
   return formatter(data);
 };
 

@@ -13,14 +13,14 @@ const normalizePath = (filepath) => {
 const getFileExtension = (filepath) => path.extname(filepath).replace('.', '');
 
 const buildDiff = (filepath1, filepath2, outputFormat) => {
-  const objects = [filepath1, filepath2]
+  const objectsToCompare = [filepath1, filepath2]
     .map(normalizePath)
     .map((filepath) => {
       const content = fs.readFileSync(filepath, 'utf-8');
       const fileExtension = getFileExtension(filepath);
       return parse(fileExtension, content);
     });
-  const astTree = buildAstTree(...objects);
+  const astTree = buildAstTree(...objectsToCompare);
   return format(outputFormat, astTree);
 };
 

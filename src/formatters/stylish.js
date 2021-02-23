@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {
   NODE_ADDED, NODE_CHANGED, NODE_NESTED, NODE_NOT_CHANGED, NODE_REMOVED, NODE_ROOT,
-} from '../constants.js';
+} from '../ast-tree.js';
 
 const stylishIndent = '  ';
 
